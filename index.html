@@ -12,14 +12,14 @@ body{min-height:100vh;overflow-x:hidden}
 button{font:inherit}
 #bg{position:fixed;inset:-80px;background:#09090b center/cover no-repeat;filter:blur(55px) saturate(1.45);transform:scale(1.12);opacity:.48;transition:background-image .8s ease,opacity .5s}
 #shade{position:fixed;inset:0;background:radial-gradient(circle at 50% 50%,#10111666,#020204ed 72%)}
-.light{position:fixed;width:42vw;height:42vw;border-radius:50%;filter:blur(90px);opacity:.25;mix-blend-mode:screen;pointer-events:none;animation:float 14s ease-in-out infinite alternate}
+.light{position:fixed;width:42vw;height:42vw;border-radius:50%;filter:blur(75px);opacity:.48;mix-blend-mode:screen;pointer-events:none;animation:float 14s ease-in-out infinite alternate}
 .l1{left:-12vw;top:-18vw;background:rgb(var(--light-rgb))}
 .l2{right:-15vw;top:4vh;background:rgb(var(--light-rgb));animation-delay:-4s}
 .l3{left:18vw;bottom:-24vw;background:rgb(var(--light-rgb));animation-delay:-7s}
 .l4{right:18vw;bottom:-26vw;background:rgb(var(--light-rgb));animation-delay:-10s}
 @keyframes float{to{transform:translate(4vw,3vh) scale(1.12)}}
-main{position:relative;z-index:2;min-height:100vh;display:grid;place-items:center;padding:34px}
-.player{position:relative;width:min(1180px,94vw);min-height:720px;padding:38px 42px 34px;border-radius:34px;overflow:hidden;background:linear-gradient(135deg,#111217f2,#090a0df5);box-shadow:0 35px 110px #000c}
+main{position:relative;z-index:20;min-height:100vh;padding:34px}
+.player{position:relative;width:min(1180px,94vw);margin:0 auto;min-height:720px;padding:38px 42px 34px;border-radius:34px;overflow:hidden;background:linear-gradient(135deg,#111217f2,#090a0df5);box-shadow:0 35px 110px #000c}
 .player:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#ffffff03,transparent 45%);pointer-events:none}
 .bgcard{position:absolute;inset:-50px;background:center/cover no-repeat;filter:blur(38px) saturate(1.45);transform:scale(1.16);opacity:.13;transition:background-image .8s ease}
 .overlay{position:absolute;inset:0;background:linear-gradient(90deg,#07080be8,#090a0ddd 60%,#08090ce8)}
@@ -56,12 +56,12 @@ main{padding:14px}.player{width:96vw;min-height:0;padding:25px;border-radius:25p
 @media(max-width:500px){
 .player{padding:19px}.brand{font-size:11px;letter-spacing:2.5px}.connection{font-size:11px}.header{margin-bottom:22px}.cover{border-radius:20px}.eyebrow{font-size:10px;letter-spacing:2px}.title{font-size:34px;letter-spacing:-1.5px}.artist{font-size:18px;margin-top:13px}.album{font-size:13px}.progress{margin-top:23px}.actions{margin-top:18px}.connect,.openSpotify{height:46px;padding:0 17px;font-size:13px}.controls{margin-top:19px}.btn{width:45px;height:45px}.btn.play{width:58px;height:58px}.hint{font-size:13px}.lyricsTop{font-size:17px}.lyricsWrap.open{height:58vh}.lyrics{padding-left:16px;padding-right:16px}.line{font-size:20px}}
 
-.searchBox{position:relative;margin:0 0 22px;z-index:8}
+.searchBox{position:relative;margin:0 auto 22px;z-index:100;width:min(1180px,94vw)}
 .searchInputWrap{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:10px 14px;backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .searchIcon{width:22px;height:22px;opacity:.72;flex:0 0 auto}
 .searchInput{width:100%;border:0;outline:0;background:transparent;color:#fff;font-size:18px;font-weight:600}
 .searchInput::placeholder{color:rgba(255,255,255,.48)}
-.searchResults{display:none;position:absolute;left:0;right:0;top:62px;padding:8px;background:rgba(12,12,15,.92);border:1px solid rgba(255,255,255,.12);border-radius:18px;backdrop-filter:blur(22px);box-shadow:0 20px 50px rgba(0,0,0,.45);max-height:390px;overflow:auto}
+.searchResults{display:none;z-index:120;position:absolute;left:0;right:0;top:62px;padding:8px;background:rgba(12,12,15,.92);border:1px solid rgba(255,255,255,.12);border-radius:18px;backdrop-filter:blur(22px);box-shadow:0 20px 50px rgba(0,0,0,.45);max-height:390px;overflow:auto}
 .searchResults.show{display:block}
 .searchResult{display:flex;align-items:center;gap:13px;width:100%;padding:10px;border:0;background:transparent;color:#fff;text-align:left;border-radius:13px;cursor:pointer}
 .searchResult:hover,.searchResult:active{background:rgba(255,255,255,.09)}
@@ -74,6 +74,23 @@ main{padding:14px}.player{width:96vw;min-height:0;padding:25px;border-radius:25p
 .searchEmpty{padding:18px;text-align:center;color:rgba(255,255,255,.5);font-size:14px}
 @media(max-width:700px){.searchInput{font-size:16px}.searchResults{max-height:330px}}
 
+
+/* Buscador V2 — efectos */
+.searchInputWrap{transition:transform .16s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease}
+.searchInputWrap:focus-within{transform:translateY(-2px) scale(1.008);border-color:rgb(var(--rgb)/.65);background:rgba(12,12,15,.72);box-shadow:0 0 0 1px rgb(var(--rgb)/.18),0 0 28px rgb(var(--rgb)/.30),0 14px 45px rgba(0,0,0,.35)}
+.searchInput{transition:transform .12s ease}
+.searchInput.key-pop{animation:keyPop .18s cubic-bezier(.2,.8,.2,1)}
+.searchInputWrap.key-glow{animation:keyGlow .28s ease-out}
+@keyframes keyPop{0%{transform:scale(.985)}55%{transform:scale(1.018)}100%{transform:scale(1)}}
+@keyframes keyGlow{0%{box-shadow:0 0 0 0 rgb(var(--rgb)/.65),0 0 0 rgb(var(--rgb)/0)}45%{box-shadow:0 0 0 4px rgb(var(--rgb)/.14),0 0 42px rgb(var(--rgb)/.38)}100%{box-shadow:0 0 0 0 rgb(var(--rgb)/0),0 0 18px rgb(var(--rgb)/.18)}}
+.searchResult{transform:translateY(8px);opacity:0;animation:resultIn .32s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes resultIn{to{transform:translateY(0);opacity:1}}
+.searchResult:hover{transform:translateX(4px)}
+.searchResult .searchPlay{transition:transform .2s ease,background .2s ease}
+.searchResult:hover .searchPlay{transform:scale(1.12);background:rgb(var(--rgb)/.28)}
+.searchEmpty.searchLoading{animation:loadingPulse 1s ease-in-out infinite alternate}
+@keyframes loadingPulse{from{opacity:.45}to{opacity:1}}
+
 </style>
 </head>
 <body>
@@ -81,7 +98,7 @@ main{padding:14px}.player{width:96vw;min-height:0;padding:25px;border-radius:25p
 
 <main>
 <section class="searchBox" id="searchBox">
-  <div class="searchInputWrap">
+  <div class="searchInputWrap" id="searchInputWrap">
     <svg class="searchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
     <input class="searchInput" id="searchInput" type="search" autocomplete="off" placeholder="Buscar canción, artista o álbum…" aria-label="Buscar en Spotify">
   </div>
@@ -156,9 +173,18 @@ async function getTrack(){const d=await api("/me/player");$("connection").innerH
 function updatePlayIcon(){$("play").innerHTML=isPlaying?'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>':'<svg viewBox="0 0 24 24"><path d="M8 5.5v13L19 12 8 5.5z"/></svg>'}
 async function searchSpotify(q){
   q=q.trim();
-  if(!q||!token){$('searchResults').classList.remove('show');return}
+  if(!q){
+    $('searchResults').classList.remove('show');
+    $('searchResults').innerHTML='';
+    return;
+  }
+  if(!token){
+    $('searchResults').innerHTML='<div class="searchEmpty">Inicia sesión con Spotify para buscar canciones.</div>';
+    $('searchResults').classList.add('show');
+    return;
+  }
   const request=++searchRequest;
-  $('searchResults').innerHTML='<div class="searchEmpty">Buscando en Spotify…</div>';
+  $('searchResults').innerHTML='<div class="searchEmpty searchLoading">⌕ Buscando en Spotify…</div>';
   $('searchResults').classList.add('show');
   try{
     const d=await api('/search?type=track&limit=8&q='+encodeURIComponent(q));
@@ -210,7 +236,26 @@ function fmt(ms){if(!ms||ms<0)return"0:00";const sec=Math.floor(ms/1000),m=Math.
 async function control(path,method="PUT"){if(!token)return login();try{await api(path,{method});setTimeout(getTrack,250)}catch(e){$("hint").textContent=e.message}}
 
 const searchInput=$('searchInput');
-searchInput.addEventListener('input',()=>{clearTimeout(searchTimer);const q=searchInput.value;searchTimer=setTimeout(()=>searchSpotify(q),260)});
+searchInput.addEventListener('input',()=>{
+  clearTimeout(searchTimer);
+  searchInput.classList.remove('key-pop');
+  $('searchInputWrap')?.classList.remove('key-glow');
+  void searchInput.offsetWidth;
+  searchInput.classList.add('key-pop');
+  $('searchInputWrap')?.classList.add('key-glow');
+  setTimeout(()=>searchInput.classList.remove('key-pop'),190);
+  setTimeout(()=>$('searchInputWrap')?.classList.remove('key-glow'),300);
+  const q=searchInput.value;
+  searchTimer=setTimeout(()=>searchSpotify(q),220);
+});
+searchInput.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    searchInput.value='';
+    $('searchResults').classList.remove('show');
+    searchInput.blur();
+  }
+  if(e.key==='Enter' && searchInput.value.trim()) searchSpotify(searchInput.value);
+});
 searchInput.addEventListener('focus',()=>{if(searchInput.value.trim())searchSpotify(searchInput.value)});
 document.addEventListener('keydown',e=>{
   if(e.key==='/' && document.activeElement!==searchInput){
@@ -230,7 +275,16 @@ $("bar").onclick=e=>{if(!duration||!token)return;const r=$("bar").getBoundingCli
 $("lyricsWrap").onclick=e=>{if(e.target.closest(".lyrics")&&$("lyricsWrap").classList.contains("open"))return;$("lyricsWrap").classList.toggle("open")};
 $("expand").onclick=()=>{$("player").classList.toggle("expanded")};
 $("cover").onclick=()=>{if(track)$("modal").classList.add("show")};$("close").onclick=()=>$("modal").classList.remove("show");$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("show")};
-async function start(){try{await getTrack();setInterval(()=>getTrack().catch(()=>{}),2000)}catch(e){$("connection").innerHTML='<span class="dot"></span>Error'}} 
+async function start(){
+  try{
+    await getTrack();
+    $('searchBox').style.display='block';
+    setInterval(()=>getTrack().catch(()=>{}),2000);
+  }catch(e){
+    $('connection').innerHTML='<span class="dot"></span>Error';
+    $('searchBox').style.display='block';
+  }
+} 
 (async()=>{try{token=localStorage.getItem("spotify_token");await exchange();if(token)await start();requestAnimationFrame(tick)}catch(e){$("connection").innerHTML='<span class="dot"></span>Desconectado';requestAnimationFrame(tick)}})();
 </script>
 </body>
