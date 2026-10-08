@@ -186,9 +186,19 @@ async function playSearchResult(uri){
     $('searchInput').blur();
     $('hint').textContent='Cambiando canción…';
     await api('/me/player/play',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({uris:[uri],position_ms:0})});
-    setTimeout(getTrack,350);
+    // Keep the search independent from the player: Spotify changes immediately,
+    // then we refresh the player a few times so the new track appears reliably.
+    let tries=0;
+    const refresh=async()=>{
+      tries++;
+      try{
+        await getTrack();
+        if(tries<4 && track?.uri!==uri)setTimeout(refresh,350);
+      }catch(e){if(tries<4)setTimeout(refresh,350)}
+    };
+    setTimeout(refresh,250);
   }catch(e){
-    $('hint').textContent='Spotify no tiene un dispositivo activo. Abre Spotify y reproduce algo primero.';
+    $("hint").textContent='No se pudo cambiar la canción. Abre Spotify y asegúrate de tener un dispositivo activo.';
   }
 }
 function escapeAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
@@ -202,6 +212,15 @@ async function control(path,method="PUT"){if(!token)return login();try{await api
 const searchInput=$('searchInput');
 searchInput.addEventListener('input',()=>{clearTimeout(searchTimer);const q=searchInput.value;searchTimer=setTimeout(()=>searchSpotify(q),260)});
 searchInput.addEventListener('focus',()=>{if(searchInput.value.trim())searchSpotify(searchInput.value)});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/' && document.activeElement!==searchInput){
+    e.preventDefault(); searchInput.focus(); searchInput.select();
+  }
+  if(e.key==='Escape'){
+    $('searchResults').classList.remove('show');
+    searchInput.blur();
+  }
+});
 $('searchResults').addEventListener('click',e=>{const b=e.target.closest('.searchResult');if(b)playSearchResult(b.dataset.uri)});
 document.addEventListener('click',e=>{if(!$('searchBox').contains(e.target))$('searchResults').classList.remove('show')});
 
