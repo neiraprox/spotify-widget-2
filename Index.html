@@ -56,12 +56,12 @@ main{padding:14px}.player{width:96vw;min-height:0;padding:25px;border-radius:25p
 @media(max-width:500px){
 .player{padding:19px}.brand{font-size:11px;letter-spacing:2.5px}.connection{font-size:11px}.header{margin-bottom:22px}.cover{border-radius:20px}.eyebrow{font-size:10px;letter-spacing:2px}.title{font-size:34px;letter-spacing:-1.5px}.artist{font-size:18px;margin-top:13px}.album{font-size:13px}.progress{margin-top:23px}.actions{margin-top:18px}.connect,.openSpotify{height:46px;padding:0 17px;font-size:13px}.controls{margin-top:19px}.btn{width:45px;height:45px}.btn.play{width:58px;height:58px}.hint{font-size:13px}.lyricsTop{font-size:17px}.lyricsWrap.open{height:58vh}.lyrics{padding-left:16px;padding-right:16px}.line{font-size:20px}}
 
-.searchBox{position:relative;margin:0 auto 22px;z-index:100;width:min(1180px,94vw)}
+.searchBox{position:relative;margin:0 auto 22px;z-index:9999;width:min(1180px,94vw);display:block!important;visibility:visible!important}
 .searchInputWrap{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:10px 14px;backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .searchIcon{width:22px;height:22px;opacity:.72;flex:0 0 auto}
 .searchInput{width:100%;border:0;outline:0;background:transparent;color:#fff;font-size:18px;font-weight:600}
 .searchInput::placeholder{color:rgba(255,255,255,.48)}
-.searchResults{display:none;z-index:120;position:absolute;left:0;right:0;top:62px;padding:8px;background:rgba(12,12,15,.92);border:1px solid rgba(255,255,255,.12);border-radius:18px;backdrop-filter:blur(22px);box-shadow:0 20px 50px rgba(0,0,0,.45);max-height:390px;overflow:auto}
+.searchResults{display:none;z-index:10000;position:absolute;left:0;right:0;top:62px;padding:8px;background:rgba(12,12,15,.92);border:1px solid rgba(255,255,255,.12);border-radius:18px;backdrop-filter:blur(22px);box-shadow:0 20px 50px rgba(0,0,0,.45);max-height:390px;overflow:auto}
 .searchResults.show{display:block}
 .searchResult{display:flex;align-items:center;gap:13px;width:100%;padding:10px;border:0;background:transparent;color:#fff;text-align:left;border-radius:13px;cursor:pointer}
 .searchResult:hover,.searchResult:active{background:rgba(255,255,255,.09)}
@@ -91,6 +91,11 @@ main{padding:14px}.player{width:96vw;min-height:0;padding:25px;border-radius:25p
 .searchEmpty.searchLoading{animation:loadingPulse 1s ease-in-out infinite alternate}
 @keyframes loadingPulse{from{opacity:.45}to{opacity:1}}
 
+
+/* BUSCADOR SIEMPRE VISIBLE */
+#searchBox{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:9999!important}
+#searchBox .searchInputWrap{position:relative;z-index:10000}
+#searchBox .searchResults{z-index:10001}
 </style>
 </head>
 <body>
@@ -208,9 +213,8 @@ async function searchSpotify(q){
 async function playSearchResult(uri){
   if(!token)return login();
   try{
-    $('searchResults').classList.remove('show');
-    $('searchInput').blur();
     $('hint').textContent='Cambiando canción…';
+    $('searchResults').classList.remove('show');
     await api('/me/player/play',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({uris:[uri],position_ms:0})});
     // Keep the search independent from the player: Spotify changes immediately,
     // then we refresh the player a few times so the new track appears reliably.
@@ -266,8 +270,20 @@ document.addEventListener('keydown',e=>{
     searchInput.blur();
   }
 });
-$('searchResults').addEventListener('click',e=>{const b=e.target.closest('.searchResult');if(b)playSearchResult(b.dataset.uri)});
-document.addEventListener('click',e=>{if(!$('searchBox').contains(e.target))$('searchResults').classList.remove('show')});
+$('searchResults').addEventListener('click',e=>{
+  const b=e.target.closest('.searchResult');
+  if(b)playSearchResult(b.dataset.uri);
+});
+searchInput.addEventListener('focus',()=>{
+  $('searchBox').style.display='block';
+  $('searchBox').hidden=false;
+  if(searchInput.value.trim())searchSpotify(searchInput.value);
+});
+document.addEventListener('click',e=>{
+  if(!$('searchBox').contains(e.target))$('searchResults').classList.remove('show');
+  $('searchBox').style.display='block';
+  $('searchBox').hidden=false;
+});
 
 $("connect").onclick=login;$("prev").onclick=()=>control("/me/player/previous","POST");$("next").onclick=()=>control("/me/player/next","POST");$("play").onclick=()=>control(isPlaying?"/me/player/pause":"/me/player/play");
 $("openSpotify").onclick=()=>{const u=$("openSpotify").dataset.url;if(u)window.open(u,"_blank","noopener")};
@@ -276,14 +292,18 @@ $("lyricsWrap").onclick=e=>{if(e.target.closest(".lyrics")&&$("lyricsWrap").clas
 $("expand").onclick=()=>{$("player").classList.toggle("expanded")};
 $("cover").onclick=()=>{if(track)$("modal").classList.add("show")};$("close").onclick=()=>$("modal").classList.remove("show");$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("show")};
 async function start(){
+  $('searchBox').style.display='block';
+  $('searchBox').hidden=false;
   try{
     await getTrack();
-    $('searchBox').style.display='block';
-    setInterval(()=>getTrack().catch(()=>{}),2000);
   }catch(e){
     $('connection').innerHTML='<span class="dot"></span>Error';
-    $('searchBox').style.display='block';
   }
+  setInterval(()=>{
+    $('searchBox').style.display='block';
+    $('searchBox').hidden=false;
+    getTrack().catch(()=>{});
+  },2000);
 } 
 (async()=>{try{token=localStorage.getItem("spotify_token");await exchange();if(token)await start();requestAnimationFrame(tick)}catch(e){$("connection").innerHTML='<span class="dot"></span>Desconectado';requestAnimationFrame(tick)}})();
 </script>
